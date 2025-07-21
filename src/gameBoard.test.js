@@ -60,27 +60,37 @@ describe("gameBoard", () => {
     }) 
   })
 
-  // describe("receiveAttack()", () => {
-  //   beforeEach(() => {
-  //     const positions = [[0, 0], [0, 1]];
-  //     gameBoard.placeShip(positions);
-  //   })
-  //   test("should hit ship on board and return true", () => {
-  //     const result = gameBoard.receiveAttack([0, 0]);
-  //     expect(result).toBe(true);
-  //     expect(gameBoard.board[0][0].hitParts).toContain([0, 0])
-  //   })
+  describe("receiveAttack()", () => {
+    beforeEach(() => {
+      const positions = [[0, 0], [0, 1]];
+      gameBoard.placeShip(positions);
+    })
+    test("should hit ship on board and return true", () => {
+      const result = gameBoard.receiveAttack([0, 0]);
+      expect(result).toBe(true);
+      expect(gameBoard.board[0][0].ship.hitParts).toContainEqual([0, 0])
+    })
 
-  //   test("should hit nothing on board and return false", () => {
-  //     const result = gameBoard.receiveAttack([0, 2]);
-  //     expect(result).toBe(false);
-  //     expect(gameBoard.board[0][2]).toBe(null);
-  //   })
+    test("should hit nothing on board and return false", () => {
+      const result = gameBoard.receiveAttack([0, 2]);
+      expect(result).toBe(false);
+    })
 
-  //   test("should return false if hit the same place twice", () => {
-  //     gameBoard.receiveAttack([0, 0]);
-  //     const result = gameBoard.receiveAttack([0, 0]);
-  //     expect(result).toBe(false);
-  //   })
-  // })
+    test("should return false if hit the same place twice", () => {
+      gameBoard.receiveAttack([0, 0]);
+      const result = gameBoard.receiveAttack([0, 0]);
+      expect(result).toBe(false);
+    })
+
+    test("should write off all surrounding cells if ship is sunk", () => {
+      gameBoard.receiveAttack([0, 0]);
+      gameBoard.receiveAttack([0, 1]);
+      expect(gameBoard.board[0][0].isHit).toBe(true);
+      expect(gameBoard.board[0][1].isHit).toBe(true);
+      expect(gameBoard.board[0][2].isHit).toBe(true);
+      expect(gameBoard.board[1][2].isHit).toBe(true);
+      expect(gameBoard.board[1][1].isHit).toBe(true);
+      expect(gameBoard.board[1][0].isHit).toBe(true);
+    })
+  })
 });

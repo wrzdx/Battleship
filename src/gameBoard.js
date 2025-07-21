@@ -15,12 +15,16 @@ export default class GameBoard {
   }
 
   init() {
-    this.board = Array.from({ length: this.size }, () =>
-      Array(this.size).fill(new Cell())
-    );
+    for (let i = 0; i < this.size; i++) {
+      const row = [];
+      for (let j = 0; j < this.size; j++) {
+        row.push(new Cell());
+      }
+      this.board.push(row);
+    }
   }
 
-  placeShip(positions) {
+  #getSurroundingPositionsOfShip(positions) {
     const surroundingPositions = [];
     positions.forEach((pos) => {
       const surrounding = [
@@ -39,6 +43,12 @@ export default class GameBoard {
         }
       });
     });
+
+    return surroundingPositions;
+  }
+
+  placeShip(positions) {
+    const surroundingPositions = this.#getSurroundingPositionsOfShip(positions);
 
     const possibleToPlace =
       positions.every(
@@ -70,5 +80,27 @@ export default class GameBoard {
     return possibleToPlace;
   }
 
-  receiveAttack(position) {}
+  receiveAttack(position) {
+    const result = this.board[position[0]][position[1]].ship
+      ? this.board[position[0]][position[1]].ship.hit(position[0], position[1])
+      : false;
+    this.board[position[0]][position[1]].isHit = true;
+
+    if (this.board[position[0]][position[1]].ship?.isSunk()) {
+      const surroundingPositions = this.#getSurroundingPositionsOfShip(
+        this.board[position[0]][position[1]].ship.hitParts
+      );
+      surroundingPositions.forEach((pos) => {
+        if (
+          pos[0] >= 0 &&
+          pos[0] < this.board.length &&
+          pos[1] >= 0 &&
+          pos[1] < this.board[0].length
+        ) {
+          this.board[pos[0]][pos[1]].isHit = true;
+        }
+      });
+    }
+    return result;
+  }
 }
