@@ -93,4 +93,18 @@ describe("gameBoard", () => {
       expect(gameBoard.board[1][0].isHit).toBe(true);
     })
   })
+
+  test("areAllShipsSunk()", () => {
+    const shipOne = [[0, 0], [0, 1]];
+    const shipTwo = [[2, 0], [2, 1]];
+    gameBoard.placeShip(shipOne);
+    gameBoard.placeShip(shipTwo);
+    expect(gameBoard.areAllShipsSunk()).toBe(false);
+    gameBoard.receiveAttack([0, 0]);
+    gameBoard.receiveAttack([0, 1]);
+    expect(gameBoard.areAllShipsSunk()).toBe(false);
+    gameBoard.receiveAttack([2, 0]);
+    gameBoard.receiveAttack([2, 1]);
+    expect(gameBoard.areAllShipsSunk()).toBe(true);
+  })
 });

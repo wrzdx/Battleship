@@ -11,6 +11,7 @@ export default class GameBoard {
   constructor(size = 8) {
     this.size = size;
     this.board = [];
+    this.ships = [];
     this.init();
   }
 
@@ -72,6 +73,7 @@ export default class GameBoard {
 
     if (possibleToPlace) {
       const ship = new Ship(positions.length);
+      this.ships.push(ship);
       positions.forEach((pos) => {
         this.board[pos[0]][pos[1]].ship = ship;
       });
@@ -102,5 +104,9 @@ export default class GameBoard {
       });
     }
     return result;
+  }
+
+  areAllShipsSunk() {
+    return this.ships.every(ship => ship.isSunk());
   }
 }
