@@ -8,7 +8,7 @@ class Cell {
 }
 
 export default class GameBoard {
-  constructor(size = 8) {
+  constructor(size = 10) {
     this.size = size;
     this.board = [];
     this.ships = [];
