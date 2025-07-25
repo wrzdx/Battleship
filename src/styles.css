@@ -131,7 +131,12 @@ body {
     0 2px 0 0 var(--text-color) inset;
 }
 
-.ships .cell.ship {
+.board .cell.hovered {
+  background-color: var(--ally-color);
+  opacity: 0.8;
+}
+
+.cell.ship {
    box-shadow: 
     2px 0 0 0 var(--text-color), 
     0 2px 0 0 var(--text-color), 
@@ -140,6 +145,13 @@ body {
     0 2px 0 0 var(--text-color) inset;
   
     background-color: var(--ally-color);
+}
+
+.cell.ship.shadow {
+   z-index: 999;
+    position: absolute;
+    filter: opacity(0.8);
+    pointer-events: none;
 }
 
 .btns {

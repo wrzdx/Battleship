@@ -14,13 +14,43 @@ export default class App {
         container.className = "placeShip"
         const title = document.createElement("h1");
         title.textContent = "Battleship";
-        const boardSystem = createBoardSystem(this.player.board);
-        const ships = createShips(this.player.board.ships);
+        let boardSystem = createBoardSystem(this.player.board);
+        
+        let ships = createShips(this.player.board.ships);
         const btns = document.createElement("div");
         btns.className = "btns";
         const rotateBtn = createButton("Rotate");
         const randomBtn = createButton("Random");
         const playBtn = createButton("Play");
+        document.body.addEventListener("mouseup", (e) => {
+            const hovered = document.querySelectorAll(".cell.hovered");
+            const shadowCells = document.querySelectorAll(".cell.ship.shadow");
+            if (hovered.length !== shadowCells.length) {
+                hovered.forEach((cell) => {
+                    cell.classList.remove("hovered");
+                });
+                return;
+            }
+            const positions = [];
+            hovered.forEach((cell) => {
+                const x = parseInt(cell.dataset.x);
+                const y = parseInt(cell.dataset.y);
+                cell.classList.remove("hovered");
+
+                positions.push([x, y]);
+            });
+            const result = this.player.board.placeShip(positions);
+            if (result) {
+                const newBoardSystem = createBoardSystem(this.player.board);
+                const newShips = createShips(this.player.board.ships);
+
+                boardSystem.replaceWith(newBoardSystem);
+                ships.replaceWith(newShips);
+
+                boardSystem = newBoardSystem;
+                ships = newShips;
+            }
+        });
         btns.append(rotateBtn, randomBtn, playBtn);
         container.append(title, boardSystem, ships, btns);
         document.body.innerHtml = "";
