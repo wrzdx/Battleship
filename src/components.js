@@ -118,6 +118,49 @@ export function createShips(placedShips, isRotated = false) {
             document.body.append(shadowCell);
           });
 
+          const highlightShipSurroundings = () => {
+            const boardDiv = document.querySelector(".board");
+            const cols = 10;
+            const rows = 10;
+            const highlightIfNotShip = (surCell) => {
+              if (!surCell || surCell.classList.contains("ship")) return;
+              surCell.classList.add("surrounding");
+            }
+            for (let i = 0; i < rows; i++) {
+              for (let j = 0; j < cols; j++) {
+                const boardCell = boardDiv.children[i * cols + j];
+                if (boardCell && boardCell.classList.contains("ship")) {
+                  if (i - 1 >= 0 && j - 1 >= 0) {
+                    highlightIfNotShip(boardDiv.children[(i - 1) * cols + j - 1]);
+                  }
+                  if (i - 1 >= 0) {
+                    highlightIfNotShip(boardDiv.children[(i - 1) * cols + j]);
+                  }
+                  if (i - 1 >= 0 && j + 1 < cols) {
+                    highlightIfNotShip(boardDiv.children[(i - 1) * cols + j + 1]);
+                  }
+                  if (j - 1 >= 0) {
+                    highlightIfNotShip(boardDiv.children[i * cols + j - 1]);
+                  }
+                  if (j + 1 < cols) {
+                    highlightIfNotShip(boardDiv.children[i * cols + j + 1]);
+                  }
+                  if (i + 1 < rows && j - 1 >= 0) {
+                    highlightIfNotShip(boardDiv.children[(i + 1) * cols + j - 1]);
+                  }
+                  if (i + 1 < rows) {
+                    highlightIfNotShip(boardDiv.children[(i + 1) * cols + j]);
+                  }
+                  if (i + 1 < rows && j + 1 < cols) {
+                    highlightIfNotShip(boardDiv.children[(i + 1) * cols + j + 1]);
+                  }
+                }
+              }
+            }
+          }
+
+          highlightShipSurroundings();
+
           const onMouseMove = (e) => {
             isPossible = true;
             document.querySelectorAll(".cell.hovered").forEach((c) => {
@@ -156,6 +199,9 @@ export function createShips(placedShips, isRotated = false) {
             document.body.removeEventListener("mousemove", onMouseMove);
             document.body.removeEventListener("mouseup", onMouseUp);
             isDragging = false;
+            document.querySelectorAll(".board .cell.surrounding").forEach((c) => {
+              c.classList.remove("surrounding");
+            });
           };
           document.body.addEventListener("mouseup", onMouseUp);
         });
