@@ -106,6 +106,32 @@ export default class GameBoard {
     return result;
   }
 
+  #clearBoard() {
+    this.board = [];
+    this.init();
+    this.ships = [];
+  }
+
+  randomizeShips() {
+    this.#clearBoard();
+    const shipLengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
+    shipLengths.forEach((length) => {
+      let placed = false;
+      while (!placed) {
+        const positions = [];
+        const isHorizontal = Math.random() < 0.5;
+        const startX = Math.floor(Math.random() * (this.size - (isHorizontal ? length : 0)));
+        const startY = Math.floor(Math.random() * (this.size - (isHorizontal ? 0 : length)));
+
+        for (let i = 0; i < length; i++) {
+          positions.push(isHorizontal ? [startX, startY + i] : [startX + i, startY]);
+        }
+
+        placed = this.placeShip(positions);
+      }
+    });
+  }
+
   areAllShipsSunk() {
     return this.ships.every(ship => ship.isSunk());
   }

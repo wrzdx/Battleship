@@ -29,6 +29,17 @@ export default class App {
             ships = newShips;
         }
         const randomBtn = createButton("Random");
+        randomBtn.onclick = (e) => {
+            this.player.board.randomizeShips();
+            const newBoardSystem = createBoardSystem(this.player.board);
+            const newShips = createShips(this.player.board.ships, rotation);
+
+            boardSystem.replaceWith(newBoardSystem);
+            ships.replaceWith(newShips);
+
+            boardSystem = newBoardSystem;
+            ships = newShips;
+        }
         const playBtn = createButton("Play");
         document.body.addEventListener("mouseup", (e) => {
             const hovered = document.querySelectorAll(".cell.hovered");

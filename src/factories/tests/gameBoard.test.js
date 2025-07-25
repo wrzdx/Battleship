@@ -106,4 +106,10 @@ describe("gameBoard", () => {
     gameBoard.receiveAttack([2, 1]);
     expect(gameBoard.areAllShipsSunk()).toBe(true);
   })
+
+  test("randomizeShips()", () => {
+    gameBoard.randomizeShips();
+    const ships = gameBoard.ships;
+    expect(ships.length).toBe(10);
+  });
 });
