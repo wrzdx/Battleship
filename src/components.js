@@ -49,10 +49,13 @@ export function createBoardSystem(board) {
   return boardSystem;
 }
 
-export function createShips(placedShips) {
+export function createShips(placedShips, isRotated = false) {
   document.addEventListener("dragstart", (e) => e.preventDefault());
   const container = document.createElement("div");
   container.className = "ships";
+  if (isRotated) {
+    container.classList.add("rotated");
+  }
   let isDragging = false;
 
   const shipsToPlace = [4, 3, 2, 1];
@@ -62,7 +65,9 @@ export function createShips(placedShips) {
   }
   shipsToPlace.reverse();
 
-  for (let i = 0; i < 11; i++) {
+  const size = isRotated ? 9 : 11;
+
+  for (let i = 0; i < size; i++) {
     const cell = document.createElement("div");
     cell.className = "cell";
     container.append(cell);
@@ -120,11 +125,13 @@ export function createShips(placedShips) {
             });
             shadowCells.forEach((shadowCell, index) => {
               const newX =
-                e.pageX -
-                (shadowCells.length * shadowCell.offsetWidth) / 2 +
-                index * shadowCell.offsetWidth;
+                e.pageX - shadowCell.offsetWidth/2 - 
+                !isRotated * (((shadowCells.length - 1) * shadowCell.offsetWidth) / 2 -
+                index * shadowCell.offsetWidth);
               shadowCell.style.left = `${newX}px`;
-              const newY = e.pageY - shadowCell.offsetHeight / 2;
+              const newY = e.pageY - shadowCell.offsetHeight / 2 -
+                isRotated * (((shadowCells.length - 1) * shadowCell.offsetHeight) / 2 -
+                index * shadowCell.offsetHeight);
               shadowCell.style.top = `${newY}px`;
               const hovered = document.elementFromPoint(
                 parseFloat(newX + shadowCell.offsetWidth / 2),
@@ -163,7 +170,7 @@ export function createShips(placedShips) {
 
     for (
       let j = 0;
-      j < 11 - cellCount + (i + 1 !== shipsToPlace.length ? 11 : 0);
+      j < size - cellCount + (i + 1 !== shipsToPlace.length ? size : 0);
       j++
     ) {
       const cell = document.createElement("div");

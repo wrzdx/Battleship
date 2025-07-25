@@ -16,10 +16,18 @@ export default class App {
         title.textContent = "Battleship";
         let boardSystem = createBoardSystem(this.player.board);
         
-        let ships = createShips(this.player.board.ships);
+        let rotation = false;
+        let ships = createShips(this.player.board.ships, rotation);
+
         const btns = document.createElement("div");
         btns.className = "btns";
         const rotateBtn = createButton("Rotate");
+        rotateBtn.onclick = (e) => {
+            rotation = !rotation;
+            const newShips = createShips(this.player.board.ships, rotation);
+            ships.replaceWith(newShips);
+            ships = newShips;
+        }
         const randomBtn = createButton("Random");
         const playBtn = createButton("Play");
         document.body.addEventListener("mouseup", (e) => {
@@ -42,7 +50,7 @@ export default class App {
             const result = this.player.board.placeShip(positions);
             if (result) {
                 const newBoardSystem = createBoardSystem(this.player.board);
-                const newShips = createShips(this.player.board.ships);
+                const newShips = createShips(this.player.board.ships, rotation);
 
                 boardSystem.replaceWith(newBoardSystem);
                 ships.replaceWith(newShips);

@@ -45,12 +45,15 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Main */
 
+html {
+  font-size: 14;
+}
+
 body {
   font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-size: 16px;
 
   /* Variables */
 
@@ -81,6 +84,11 @@ body {
   width: 42rem;
   display: grid;
   grid-template-columns: repeat(11, 1fr);
+}
+
+.ships.rotated {
+  grid-auto-flow: column;
+  grid-template-rows: repeat(9, 1fr);
 }
 
 .boardSystem {
