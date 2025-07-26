@@ -6,10 +6,10 @@ export default class Ship {
 
   hit(x, y) {
     const alreadyHit = this.hitParts.some(
-      ([hitX, hitY]) => hitX === x && hitY === y
+      ([hitX, hitY]) => hitX === +x && hitY === +y
     );
     if (!alreadyHit && this.hitParts.length < this.length) {
-      this.hitParts.push([x, y]);
+      this.hitParts.push([+x, +y]);
       return true;
     }
 

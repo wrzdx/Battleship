@@ -50,9 +50,7 @@ export default class GameBoard {
 
   placeShip(positions) {
     const surroundingPositions = this.#getSurroundingPositionsOfShip(positions);
-
-    const possibleToPlace =
-      positions.every(
+    const test1 = positions.every(
         (pos) =>
           pos[0] >= 0 &&
           pos[0] < this.board.length &&
@@ -60,8 +58,8 @@ export default class GameBoard {
           pos[1] < this.board[0].length &&
           !this.board[pos[0]][pos[1]].isHit &&
           !this.board[pos[0]][pos[1]].ship
-      ) &&
-      surroundingPositions.every(
+      );
+    const test2 = surroundingPositions.every(
         (pos) =>
           !(
             pos[0] >= 0 &&
@@ -70,6 +68,7 @@ export default class GameBoard {
             pos[1] < this.board[0].length
           ) || !this.board[pos[0]][pos[1]].ship
       );
+    const possibleToPlace = test1 && test2
 
     if (possibleToPlace) {
       const ship = new Ship(positions.length);
@@ -134,5 +133,9 @@ export default class GameBoard {
 
   areAllShipsSunk() {
     return this.ships.every(ship => ship.isSunk());
+  }
+
+  areAllShipsPlaced() {
+    return this.ships.length === 10;
   }
 }

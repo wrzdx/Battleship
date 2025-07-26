@@ -4,15 +4,15 @@ describe("gameBoard", () => {
   let gameBoard;
 
   beforeEach(() => {
-    gameBoard = new GameBoard(8);
+    gameBoard = new GameBoard(10);
   });
 
   test("should initialize with correct size and empty board", () => {
-    expect(gameBoard.size).toBe(8);
-    expect(gameBoard.board).toHaveLength(8); 
+    expect(gameBoard.size).toBe(10);
+    expect(gameBoard.board).toHaveLength(10);
 
     gameBoard.board.forEach((row) => {
-      expect(row).toHaveLength(8);
+      expect(row).toHaveLength(10);
       row.forEach((cell) => {
         expect(cell.ship).toBeNull();
         expect(cell.isHit).toBe(false);
@@ -33,13 +33,13 @@ describe("gameBoard", () => {
     })
 
     test("shouldn't place ship in out of range place on board and return false", () => {
-      const positions = [[0, 0], [0, 8]];
+      const positions = [[0, 0], [0, 10]];
 
       const result = gameBoard.placeShip(positions);
 
       expect(result).toBe(false);
       expect(gameBoard.board[0][0].ship).toBeNull();
-      expect(gameBoard.board[0][8]).toBe(undefined);
+      expect(gameBoard.board[0][10]).toBe(undefined);
     })
 
     test("shouldn place two ship if the distance between them no less than 1", () => {
@@ -111,5 +111,22 @@ describe("gameBoard", () => {
     gameBoard.randomizeShips();
     const ships = gameBoard.ships;
     expect(ships.length).toBe(10);
+  });
+
+  test("areAllShipsPlaced()", () => {
+    expect(gameBoard.areAllShipsPlaced()).toBe(false);
+    const positions = [
+      [[0, 0], [0, 1], [0, 2], [0, 3]],
+      [[0, 5], [0, 6], [0, 7]],
+      [[2, 0], [2, 1], [2, 2]],
+      [[2, 4], [2, 5]],
+      [[2, 7], [2, 8]],
+      [[4, 0], [4, 1]],
+      [[4, 3]], [[4, 5]], [[4, 7]], [[4, 9]]
+    ];
+    positions.forEach((pos) => {
+      expect(gameBoard.placeShip(pos)).toBe(true);
+    });
+    expect(gameBoard.areAllShipsPlaced()).toBe(true);
   });
 });

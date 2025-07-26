@@ -63,16 +63,18 @@ body {
   --enemy-color: #F2545B;
 }
 
-.placeShip {
+.placeShip,
+.gameBoard {
   width: 100%;
-  padding: 0 4rem;
+  padding: 0 6rem;
   display: grid;
   grid-template-columns: auto auto;
   grid-template-rows: 6rem auto 1fr;
-  column-gap: 4rem;
+  column-gap: 6rem;
 }
 
-.placeShip h1 {
+.placeShip h1,
+.gameBoard h1 {
   text-align: center;
   font-size: 4rem;
   line-height: 1.5em;
@@ -91,8 +93,11 @@ body {
   grid-template-rows: repeat(9, 1fr);
 }
 
+.boardSystem:nth-child(3) {
+  justify-self: start;
+}
+
 .boardSystem {
-  justify-self: end;
   grid-row: 2 / 4;
 }
 
@@ -157,7 +162,24 @@ body {
     2px 0 0 0 var(--text-color) inset, 
     0 2px 0 0 var(--text-color) inset;
   
-    background-color: var(--ally-color);
+}
+
+.board.player .cell.ship,
+.ships .cell.ship {
+  background-color: var(--ally-color);
+}
+
+.board .cell.hit {
+  background: repeating-linear-gradient(45deg, var(--bg-color),var(--bg-color) 5%, var(--text-color) 5%, var(--text-color) 10%);
+}
+
+.boardSystem .board.computer .cell.ship.hit {
+  background: none;
+  background-color: var(--enemy-color);
+}
+
+.board.player .cell.hit.ship {
+  background: repeating-linear-gradient(-45deg, var(--ally-color),var(--ally-color) 5%, var(--text-color) 5%, var(--text-color) 10%);
 }
 
 .cell.ship.shadow {
@@ -190,4 +212,9 @@ body {
 .btns .btn:hover {
   background-color: var(--text-color);
   color: var(--bg-color);
+}
+
+.btns .btn.disabled {
+  opacity: 0.75;
+  pointer-events: none;
 }

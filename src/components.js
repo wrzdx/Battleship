@@ -1,9 +1,9 @@
-export function createBoardSystem(board) {
+export function createBoardSystem(board, isComputer = false) {
   const boardSystem = document.createElement("div");
   boardSystem.className = "boardSystem";
 
   const boardContainer = document.createElement("div");
-  boardContainer.className = "board";
+  boardContainer.className = `board ${isComputer ? "computer" : "player"}`;
   board.board.forEach((row, x) => {
     row.forEach((cell, y) => {
       const cellDiv = document.createElement("div");
