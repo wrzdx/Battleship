@@ -43,7 +43,7 @@ export default class App {
       ships = newShips;
       playBtn.classList.remove("disabled");
     };
-    
+
     const onMouseUpClearCells = (e) => {
       const hovered = document.querySelectorAll(".cell.hovered");
       const shadowCells = document.querySelectorAll(".cell.ship.shadow");
@@ -75,7 +75,7 @@ export default class App {
           playBtn.classList.remove("disabled");
         }
       }
-    }
+    };
     document.body.addEventListener("mouseup", onMouseUpClearCells);
     playBtn.onclick = (e) => {
       document.body.removeEventListener("mouseup", onMouseUpClearCells);
@@ -85,6 +85,25 @@ export default class App {
     container.append(title, boardSystem, ships, btns);
     document.body.innerHtml = "";
     document.body.append(container);
+  }
+
+  renderPlayAgain(isPlayerWin) {
+    const blurContainer = document.createElement("div");
+    blurContainer.className = "blurContainer";
+    const playAgainDiv = document.createElement("div");
+    playAgainDiv.className = "playAgain";
+    const title = document.createElement("h1");
+    title.textContent = isPlayerWin ? "You won!" : "Computer won!";
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = "Play again";
+    btn.onclick = (e) => {
+      document.body.innerHTML = "";
+      this.start();
+    };
+    playAgainDiv.append(title, btn);
+    blurContainer.append(playAgainDiv);
+    document.body.append(blurContainer);
   }
 
   renderGameBoard() {
@@ -97,41 +116,57 @@ export default class App {
     let computerBoardSystem = createBoardSystem(this.computer.board, true);
     let computerBoard = computerBoardSystem.querySelector(".board");
     let isPlayerTurn = true;
-    const attack = (e) => {
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    const attack = async (e) => {
       if (e.target.classList.contains("hit") || !isPlayerTurn) return;
-      const x = e.target.dataset.x;
-      const y = e.target.dataset.y;
+
+      const x = +e.target.dataset.x;
+      const y = +e.target.dataset.y;
+      if (isNaN(x) || isNaN(y)) return;
+
       const result = this.computer.board.receiveAttack([x, y]);
-      const newComputerBoardSystem = createBoardSystem(this.computer.board, true);
+
+      let newComputerBoardSystem = createBoardSystem(this.computer.board, true);
       computerBoardSystem.replaceWith(newComputerBoardSystem);
       computerBoardSystem = newComputerBoardSystem;
       computerBoardSystem.querySelector(".board").onclick = attack;
 
+      if (this.computer.board.areAllShipsSunk()) {
+        this.renderPlayAgain(true);
+        return;
+      }
+
       if (!result) {
         isPlayerTurn = false;
+        await sleep(500);
+
         while (true) {
           const x1 = Math.floor(Math.random() * this.player.board.size);
           const y1 = Math.floor(Math.random() * this.player.board.size);
           const cell = this.player.board.board[x1][y1];
-          if (!cell?.isHit) {
+
+          if (!cell.isHit) {
             const computerResult = this.player.board.receiveAttack([x1, y1]);
+
+            let newPlayerBoardSystem = createBoardSystem(this.player.board);
+            playerBoardSystem.replaceWith(newPlayerBoardSystem);
+            playerBoardSystem = newPlayerBoardSystem;
+
+            await sleep(800);
+
+            if (this.player.board.areAllShipsSunk()) {
+              this.renderPlayAgain(false);
+              return;
+            }
+
             if (!computerResult) {
-              break;      
-            } else {
-              if (this.player.board.areAllShipsSunk()) {
-                alert("Computer won!");
-                break;
-              }
+              isPlayerTurn = true;
+              break;
             }
           }
-        }
-        const newPlayerBoardSystem = createBoardSystem(this.player.board);
-        playerBoardSystem.replaceWith(newPlayerBoardSystem);
-        playerBoardSystem = newPlayerBoardSystem;
-        isPlayerTurn = true;
-      } else {
-        if (this.computer.board.areAllShipsSunk()) {
-          alert("Player won!");
         }
       }
     };
