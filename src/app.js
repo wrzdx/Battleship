@@ -116,6 +116,8 @@ export default class App {
     let computerBoardSystem = createBoardSystem(this.computer.board, true);
     let computerBoard = computerBoardSystem.querySelector(".board");
     let isPlayerTurn = true;
+    let isHunting = false;
+    let targetCell = [null, null];
     function sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
@@ -141,11 +143,34 @@ export default class App {
 
       if (!result) {
         isPlayerTurn = false;
+        const getIndex = () => {
+          if (isHunting) {
+            const possibleTargets = [
+              [targetCell[0] - 1, targetCell[1]],
+              [targetCell[0] + 1, targetCell[1]],
+              [targetCell[0], targetCell[1] - 1],
+              [targetCell[0], targetCell[1] + 1],
+            ].filter((pos) => {
+              return (
+                pos[0] >= 0 &&
+                pos[0] < this.player.board.size &&
+                pos[1] >= 0 &&
+                pos[1] < this.player.board.size &&
+                !this.player.board.board[pos[0]][pos[1]].isHit
+              );
+            });
+
+            if (possibleTargets.length > 0) {
+              const randomIndex = Math.floor(Math.random() * possibleTargets.length);
+              return possibleTargets[randomIndex];
+            }
+          }
+          return [Math.floor(Math.random() * this.player.board.size), Math.floor(Math.random() * this.player.board.size)];
+        }
         await sleep(500);
 
         while (true) {
-          const x1 = Math.floor(Math.random() * this.player.board.size);
-          const y1 = Math.floor(Math.random() * this.player.board.size);
+          const [x1, y1] = getIndex();
           const cell = this.player.board.board[x1][y1];
 
           if (!cell.isHit) {
@@ -155,7 +180,7 @@ export default class App {
             playerBoardSystem.replaceWith(newPlayerBoardSystem);
             playerBoardSystem = newPlayerBoardSystem;
 
-            await sleep(800);
+            await sleep(500);
 
             if (this.player.board.areAllShipsSunk()) {
               this.renderPlayAgain(false);
@@ -165,6 +190,14 @@ export default class App {
             if (!computerResult) {
               isPlayerTurn = true;
               break;
+            } else {
+              targetCell = [x1, y1];
+              isHunting = true;
+              const ship = this.player.board.board[x1][y1].ship;
+              if (ship.isSunk()) {
+                isHunting = false;
+                targetCell = [null, null];
+              }
             }
           }
         }
